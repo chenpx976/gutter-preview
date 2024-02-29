@@ -33,16 +33,14 @@ console.error = connection.console.error.bind(connection.console);
 let documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 documents.listen(connection);
 
-connection.onInitialize(
-    (parameters): InitializeResult => {
-        ImageCache.configure(parameters.initializationOptions.storagePath);
-        return {
-            capabilities: {
-                textDocumentSync: TextDocumentSyncKind.Full,
-            },
-        };
-    }
-);
+connection.onInitialize((parameters): InitializeResult => {
+    ImageCache.configure(parameters.initializationOptions.storagePath);
+    return {
+        capabilities: {
+            textDocumentSync: TextDocumentSyncKind.Full,
+        },
+    };
+});
 
 connection.onRequest(
     GutterPreviewImageRequestType,
@@ -160,7 +158,10 @@ async function convertToLocalImagePath(absoluteImagePath: string, urlMatch: UrlM
             if (absoluteImageUrl && absoluteImageUrl.path) {
                 let absolutePath = path.parse(absoluteImageUrl.path);
                 isExtensionSupported = acceptedExtensions.some(
-                    (ext) => absolutePath && absolutePath.ext && absolutePath.ext.toLowerCase().startsWith(ext)
+                    (ext) =>
+                        absolutePath &&
+                        ((absolutePath.ext && absolutePath.ext.toLowerCase() === ext) ||
+                            absoluteImageUrl.path.toLowerCase().endsWith('original'))
                 );
             }
         }

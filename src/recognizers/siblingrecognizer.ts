@@ -5,7 +5,7 @@ export const siblingRecognizer: ImagePathRecognizer = {
     recognize: (lineIndex: number, line: string): UrlMatch[] => {
         const excludedPathCharactersClause = '[^\\0\\s!$`&*()\\[\\]+\'":;\\\\]';
         let pattern: RegExp = new RegExp(
-            `(${excludedPathCharactersClause}+[${acceptedExtensions.map((p) => `(\\${p})`).join('|')}])`,
+            `(${excludedPathCharactersClause}+(?:${acceptedExtensions.map((p) => `\\${p}`).join('|')}|original))`,
             'ig'
         );
         let match: RegExpExecArray;
